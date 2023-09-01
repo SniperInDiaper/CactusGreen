@@ -1,16 +1,18 @@
 import gradio as gr
+import openai
 
 css = """
-.feedback textarea {font-size: 24px !important; background-color: #000000 !important}
+.feedback textarea {font-size: 24px !important;}
 .centered {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
+  display: flex;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 10vh !important;
 }
 .label {
   font-size: 24px !important;
   font-weight: bold !important;
-  color: #000000 !important;
   transform: translate(0px, 0px) !important;
 }
 """
@@ -57,18 +59,71 @@ The **AI Business Decision Analysis Module** is an advanced artificial intellige
 In conclusion, the AI Business Decision Analysis Module empowers businesses to make well-informed decisions by analyzing critical factors and providing actionable recommendations. By harnessing the power of AI, businesses can increase their success chances and achieve their goals more effectively.
 """
 
-blocks = gr.Blocks(css=css)
-def PrintAnalysisReport(name, age):
-  return f"Hello {name}! You are {age} years old."
+#if you have OpenAI API key as an environment variable, enable the below
+#openai.api_key = os.getenv("OPENAI_API_KEY")
+
+#if you have OpenAI API key as a string, enable the below
+openai.api_key = "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"
+
+start_sequence = "\nAI:"
+restart_sequence = "\nHuman: "
+
+
+blocks = gr.Blocks(css=css,theme=gr.themes.Soft())
+
+def PrintAnalysisReport(Type,Startup_Costs, Revenue_Projection, Operating_Costs, Marketing_Budget, Number_of_business_in_2_km_radius):
+  return openai_create(f"""
+i want to build a {Type} branch
+
+Startup Costs: {Startup_Costs} SR
+
+Revenue Projections: {Revenue_Projection} SR
+
+Operating Costs: {Operating_Costs} SR
+
+Marketing Budget: {Marketing_Budget} SR
+
+Number of business in 2 km radius: {Number_of_business_in_2_km_radius}
+
+Given the following data I would like you to give me a marketing plan and a Staffing plan and if this is a good idea or not in the following format:
+
+1-Break-even point analysis both written format and in in the end of the response in a csv format.
+
+2-Staffing plan
+
+3-Marketing Plan
+
+and make it concise and professional to 150 total words
+""")
+def openai_create(prompt):
+    response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages= [{"role": "user", "content": f"{prompt}"}],
+    #prompt=prompt,
+    temperature=0.7,
+    #max_tokens=150,
+    #top_p=1,
+    #frequency_penalty=0,
+   # presence_penalty=0.6,
+    #stop=[" Human:", " AI:"]
+    )
+
+    return response["choices"][0]["message"]["content"]
   
 with blocks as demo:
+    
     gr.HTML(value=html,elem_classes="centered")
     gr.Label("Welcome to Consultant Business Model.!", elem_classes="label centered")
     gr.Markdown(markdown)
-    box1 = gr.Textbox(label="Name", placeholder="Enter your name", value="", elem_id="warning", elem_classes="feedback")
-    box2 = gr.Textbox(label="age", placeholder="Enter your age", value="", elem_id="warning", elem_classes="feedback")
-    output1 = gr.Textbox(label="Analysis Report", placeholder="Analysis Report", value="", elem_id="warning", elem_classes="feedback",lines=10)
+    box0 = gr.Textbox(info="weather it's a coffe shop or a restruant etc..",label="Business Type", placeholder="", value="", elem_id="warning", elem_classes="feedback")
+    box1 = gr.Textbox(info="The total estimated startup costs, including expenses such as rent, interior design, equipment purchase, licenses and permits, staff salaries, marketing expenses, and any other relevant costs. Please provide a breakdown if possible.",label="Startup Costs", placeholder="", value="", elem_id="warning", elem_classes="feedback")
+    box2 = gr.Textbox(info="The projected annual revenue for the first few years of operation. This should be based on expected customer traffic, average spending per customer, and any other relevant revenue sources.",label="Revenue Projections", placeholder="", value="", elem_id="warning", elem_classes="feedback")
+    box3 = gr.Textbox(info="A breakdown of your monthly operating costs, including rent, utilities, staff salaries, cost of goods sold (coffee beans, snacks, etc.), marketing expenses, and any other recurring expenses.",label="Operating Costs", placeholder="", value="", elem_id="warning", elem_classes="feedback")
+    box4 = gr.Textbox(info="Costs of your marketing plan, including how you plan to attract customers to your new coffee shop. This may include social media promotion, local partnerships, and customer loyalty programs.",label="Marketing Costs", placeholder="", value="", elem_id="warning", elem_classes="feedback")
+    box5 = gr.Textbox(info="",label="Number of business in 2 km radius", placeholder="", value="", elem_id="warning", elem_classes="feedback")    
+    ##output
+    output1 = gr.Textbox(label="Analysis Report", placeholder="Analysis Report", value="", elem_id="warning", elem_classes="feedback",lines=10,show_copy_button=True)
     btn = gr.Button(value="analyse", elem_id="submit", elem_classes="feedback")
-    btn.click(PrintAnalysisReport,[box1, box2],output1)
+    btn.click(PrintAnalysisReport,[box0, box1, box2, box3,box4,box5],output1)
     demo.launch()
     
