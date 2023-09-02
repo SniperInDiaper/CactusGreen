@@ -61,7 +61,7 @@ In conclusion, the AI Business Decision Analysis Module empowers businesses to m
 """
 
 #if you have OpenAI API key as an environment variable, enable the below
-openai.api_key = "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"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 start_sequence = "\nAI:"
