@@ -124,5 +124,5 @@ with blocks as demo:
     output1 = gr.Textbox(label="Analysis Report", placeholder="Analysis Report", value="", elem_id="warning", elem_classes="feedback",lines=10,show_copy_button=True)
     btn = gr.Button(value="analyse", elem_id="submit", elem_classes="feedback")
     btn.click(PrintAnalysisReport,[box0, box1, box2, box3,box4,box5],output1)
-    demo.launch()
-    
+    demo.launch(sharing=True)
+  
