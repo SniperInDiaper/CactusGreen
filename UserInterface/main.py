@@ -64,7 +64,6 @@ In conclusion, the AI Business Decision Analysis Module empowers businesses to m
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-
 start_sequence = "\nAI:"
 restart_sequence = "\nHuman: "
 
