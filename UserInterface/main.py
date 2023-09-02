@@ -1,3 +1,4 @@
+import os
 import gradio as gr
 import openai
 
@@ -60,10 +61,9 @@ In conclusion, the AI Business Decision Analysis Module empowers businesses to m
 """
 
 #if you have OpenAI API key as an environment variable, enable the below
-#openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-#if you have OpenAI API key as a string, enable the below
-openai.api_key = "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"
+
 
 start_sequence = "\nAI:"
 restart_sequence = "\nHuman: "
