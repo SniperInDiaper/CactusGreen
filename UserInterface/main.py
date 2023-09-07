@@ -74,7 +74,7 @@ blocks = gr.Blocks(css=css, theme=gr.themes.Soft())
 def PrintAnalysisReport(Type, Startup_Costs, Marketing_Budget):
     return openai_create(
         f"""
-i want to build a {Type} branch in Saudi Arabia - Riyadh city
+i want to build a {Type} in Saudi Arabia - Riyadh city
 
 Startup Costs: {Startup_Costs} SR
 
