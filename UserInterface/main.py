@@ -60,7 +60,7 @@ The **AI Business Decision Analysis Module** is an advanced artificial intellige
 In conclusion, the AI Business Decision Analysis Module empowers businesses to make well-informed decisions by analyzing critical factors and providing actionable recommendations. By harnessing the power of AI, businesses can increase their success chances and achieve their goals more effectively.
 """
 
-#if you have OpenAI API key as an environment variable, enable the below
+# if you have OpenAI API key as an environment variable, enable the below
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
@@ -68,19 +68,19 @@ start_sequence = "\nAI:"
 restart_sequence = "\nHuman: "
 
 
-blocks = gr.Blocks(css=css,theme=gr.themes.Soft())
+blocks = gr.Blocks(css=css, theme=gr.themes.Soft())
 
-def PrintAnalysisReport(Type,Startup_Costs, Marketing_Budget, Number_of_business_in_2_km_radius):
-  return openai_create(f"""
-i want to build a {Type} branch Saudi Arabia - Riyadh city
+
+def PrintAnalysisReport(Type, Startup_Costs, Marketing_Budget):
+    return openai_create(
+        f"""
+i want to build a {Type} branch in Saudi Arabia - Riyadh city
 
 Startup Costs: {Startup_Costs} SR
 
 Marketing Budget: {Marketing_Budget} SR
 
-Number of business in 2 km radius: {Number_of_business_in_2_km_radius}
-
-Given the following data I would like you to give me a marketing plan and a Staffing plan and if this is a good descision or not in the following format:
+Given the following data I would like you to give me a marketing plan and a Staffing plan and if this is a good dec or not in the following format:
 
 * Revenue Projections and Operating Costs for the first 5 years note that if there is no data for the first 5 years you can simulate the data.
 
@@ -106,28 +106,58 @@ the marketing plan for the first 5 years
 the net profit for the first 5 years
 
 for each of the above points be sure to list the assumptions and the data sources used in the analysis. and line-break after each point using "=" seperator.
-""")
+"""
+    )
+
+
 def openai_create(prompt):
     response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages= [{"role": "user", "content": f"{prompt}"}],
-    temperature=0.7,
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": f"{prompt}"}],
+        temperature=0.7,
     )
 
     return response["choices"][0]["message"]["content"]
-  
+
+
 with blocks as demo:
-    
-    gr.HTML(value=html,elem_classes="centered")
+    gr.HTML(value=html, elem_classes="centered")
     gr.Label("Welcome to Consultant Business Model.!", elem_classes="label centered")
     gr.Markdown(markdown)
-    box0 = gr.Textbox(info="weather it's a coffe shop or a restruant etc..",label="Business Type", placeholder="", value="", elem_id="warning", elem_classes="feedback")
-    box1 = gr.Textbox(info="The total estimated startup costs, including expenses such as rent, interior design, equipment purchase, licenses and permits, staff salaries, marketing expenses, and any other relevant costs. Please provide a breakdown if possible.",label="Startup Budget", placeholder="", value="", elem_id="warning", elem_classes="feedback")
-    box4 = gr.Textbox(info="Costs of your marketing plan, including how you plan to attract customers to your new coffee shop. This may include social media promotion, local partnerships, and customer loyalty programs.",label="Marketing Budget", placeholder="", value="", elem_id="warning", elem_classes="feedback")
-    box5 = gr.Textbox(info="",label="Number of business in 2 km radius", placeholder="", value="", elem_id="warning", elem_classes="feedback")    
-    ##output
-    output1 = gr.Textbox(label="Analysis Report", placeholder="Analysis Report", value="", elem_id="warning", elem_classes="feedback",lines=10,show_copy_button=True)
+    box0 = gr.Textbox(
+        info="Whether it's a coffee shop or a restaurant etc..",
+        label="Business Type",
+        placeholder="",
+        value="",
+        elem_id="warning",
+        elem_classes="feedback",
+    )
+    box1 = gr.Textbox(
+        info="The total estimated startup costs, including expenses such as rent, interior design, equipment purchase, licenses and permits, staff salaries, marketing expenses, and any other relevant costs. Please provide a breakdown if possible.",
+        label="Startup Budget",
+        placeholder="",
+        value="",
+        elem_id="warning",
+        elem_classes="feedback",
+    )
+    box4 = gr.Textbox(
+        info="Costs of your marketing plan, including how you plan to attract customers to your new coffee shop. This may include social media promotion, local partnerships, and customer loyalty programs.",
+        label="Marketing Budget",
+        placeholder="",
+        value="",
+        elem_id="warning",
+        elem_classes="feedback",
+    )
+    # output
+    output1 = gr.Textbox(
+        label="Analysis Report",
+        placeholder="Analysis Report",
+        value="",
+        elem_id="warning",
+        elem_classes="feedback",
+        lines=10,
+        show_copy_button=True,
+    )
     btn = gr.Button(value="analyse", elem_id="submit", elem_classes="feedback")
-    btn.click(PrintAnalysisReport,[box0, box1,box4,box5],output1)
+    btn.click(PrintAnalysisReport, [box0, box1, box4], output1)
     demo.launch(share=True)
-  
